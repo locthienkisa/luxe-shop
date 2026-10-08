@@ -1,0 +1,39 @@
+:root {
+  --lx-navy: #0f2744;
+  --lx-gold: #c9a227;
+  --lx-ink: #1a1a1a;
+  --lx-muted: #6b7280;
+  --lx-bg: #f6f4f0;
+  --lx-card: #ffffff;
+}
+body { font-family: "Be Vietnam Pro", system-ui, sans-serif; background: var(--lx-bg); color: var(--lx-ink); }
+.navbar-lx { background: var(--lx-navy); }
+.navbar-lx .nav-link, .navbar-lx .navbar-brand { color: #fff; }
+.navbar-lx .nav-link:hover { color: var(--lx-gold); }
+.search-wrap { min-width: 220px; max-width: 520px; }
+.hero-slide { min-height: 340px; background: linear-gradient(120deg, #0f2744, #1d4e89); color: #fff; border-radius: 1rem; }
+.hero-slide h1 { font-weight: 700; }
+.section-title { font-weight: 700; letter-spacing: -.02em; }
+.product-card { border: 0; border-radius: 1rem; overflow: hidden; box-shadow: 0 8px 24px rgba(15,39,68,.06); height: 100%; }
+.product-card img { aspect-ratio: 1/1; object-fit: cover; width: 100%; background: #ece7dc; }
+.price { color: #b45309; font-weight: 700; }
+.price-old { text-decoration: line-through; color: var(--lx-muted); font-weight: 400; font-size: .9rem; }
+.badge-sale { background: #b91c1c; }
+.footer-lx { background: var(--lx-navy); color: #cbd5e1; }
+.footer-lx a { color: #e2e8f0; text-decoration: none; }
+.btn-gold { background: var(--lx-gold); color: #111; border: 0; }
+.btn-gold:hover { background: #b8911c; color: #111; }
+.icon-btn { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; }
+.account-nav .nav-link.active { background: var(--lx-navy); color: #fff; }
+.timeline { border-left: 3px solid #e5e7eb; padding-left: 1rem; }
+.timeline-item { position: relative; margin-bottom: 1rem; }
+.timeline-item::before { content: ""; width: 12px; height: 12px; background: var(--lx-gold); border-radius: 50%; position: absolute; left: -1.45rem; top: .35rem; }
+.admin-sidebar { min-height: 100vh; background: #0b1c31; }
+.admin-sidebar a { color: #cbd5e1; }
+.admin-sidebar a.active, .admin-sidebar a:hover { color: #fff; background: rgba(255,255,255,.08); }
+.stat-card { border: 0; border-radius: 1rem; box-shadow: 0 8px 24px rgba(15,39,68,.06); }
+img.lazy { background: #eee; }
+@media (max-width: 575.98px) {
+  .hero-slide { min-height: 240px; }
+  .icon-btn { width: 40px; height: 40px; }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "luxe/shop",
+  "description": "Luxe Shop — PHP e-commerce (Apache + MySQL)",
+  "type": "project",
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}
