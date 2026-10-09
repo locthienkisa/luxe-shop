@@ -133,7 +133,7 @@ final class CartService
     public static function items(): array
     {
         $cartId = self::currentCartId();
-        $sql = 'SELECT ci.*, p.name, p.slug, p.sku, p.price, p.sale_price, p.stock AS product_stock,
+        $sql = 'SELECT ci.*, p.name, p.slug, p.sku, p.price, p.sale_price, p.is_active AS product_active, p.stock AS product_stock,
                        v.sku AS variant_sku, v.size, v.color, v.price AS variant_price, v.stock AS variant_stock,
                        (SELECT path FROM product_images pi WHERE pi.product_id=p.id ORDER BY is_primary DESC LIMIT 1) AS image
                 FROM cart_items ci

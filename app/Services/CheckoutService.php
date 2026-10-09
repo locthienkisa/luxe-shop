@@ -25,6 +25,9 @@ final class CheckoutService
         }
 
         foreach ($totals['items'] as $item) {
+            if (!(int) $item['product_active']) {
+                throw new \RuntimeException('Sản phẩm ' . $item['name'] . ' hiện không còn được bán.');
+            }
             $stock = Product::availableStock((int) $item['product_id'], $item['variant_id'] ? (int) $item['variant_id'] : null);
             if ((int) $item['quantity'] > $stock) {
                 throw new \RuntimeException('Sản phẩm ' . $item['name'] . ' không đủ tồn kho.');
@@ -56,6 +59,16 @@ final class CheckoutService
         $pdo = Database::connection();
         $pdo->beginTransaction();
         try {
+            if ($totals['coupon']) {
+                $couponSt = $pdo->prepare('SELECT * FROM coupons WHERE id = :id FOR UPDATE');
+                $couponSt->execute(['id' => $totals['coupon']['id']]);
+                $coupon = $couponSt->fetch();
+                if (!$coupon) {
+                    throw new \RuntimeException('Mã giảm giá không còn hiệu lực.');
+                }
+                CouponService::validate($coupon, $totals['subtotal'], $userId);
+            }
+
             $orderNumber = 'LX' . date('ymd') . strtoupper(bin2hex(random_bytes(3)));
             $pdo->prepare(
                 'INSERT INTO orders (order_number,user_id,address_id,shipping_name,shipping_phone,shipping_address,
@@ -97,7 +110,7 @@ final class CheckoutService
                     'qty' => $item['quantity'],
                     'lt' => $item['line_total'],
                 ]);
-                Product::adjustStock((int) $item['product_id'], $item['variant_id'] ? (int) $item['variant_id'] : null, -1 * (int) $item['quantity']);
+                Product::reserveStock((int) $item['product_id'], $item['variant_id'] ? (int) $item['variant_id'] : null, (int) $item['quantity']);
                 $pdo->prepare(
                     'INSERT INTO inventory (product_id,variant_id,change_qty,reason,reference_type,reference_id,created_by)
                      VALUES (:p,:v,:q,\'sale\',\'order\',:oid,:uid)'

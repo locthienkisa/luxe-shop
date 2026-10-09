@@ -54,9 +54,17 @@
                 </select>
             </form>
         </div>
-        <div class="row">
-            <?php foreach ($products as $p) { include dirname(__DIR__) . '/partials/product-card.php'; } ?>
-        </div>
+        <?php if ($products): ?>
+            <div class="row">
+                <?php foreach ($products as $p) { include dirname(__DIR__) . '/partials/product-card.php'; } ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state text-center bg-white p-5">
+                <h2 class="h5">Không tìm thấy sản phẩm</h2>
+                <p class="text-muted mb-3">Thử thay đổi từ khóa hoặc bộ lọc để xem thêm sản phẩm.</p>
+                <a class="btn btn-outline-dark" href="<?= e(url('/san-pham')) ?>">Xem tất cả sản phẩm</a>
+            </div>
+        <?php endif; ?>
         <?php if ($meta['pages'] > 1): ?>
             <nav><ul class="pagination">
                 <?php for ($i=1;$i<=$meta['pages'];$i++): ?>

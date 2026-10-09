@@ -9,6 +9,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Validator;
 use App\Models\ApiToken;
+use App\Models\LoginAttempt;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -32,7 +33,7 @@ final class ApiController
     public function product(Request $r, array $p): void
     {
         $product = Product::findBySlug((string) $p['slug']);
-        if (!$product) {
+        if (!$product || !(int) $product['is_active']) {
             Response::json(['error' => 'Not found'], 404);
         }
         $product['images'] = Product::images((int) $product['id']);
@@ -45,10 +46,17 @@ final class ApiController
         $data = json_decode($r->body, true) ?: $r->post;
         $email = strtolower(trim((string) ($data['email'] ?? '')));
         $password = (string) ($data['password'] ?? '');
+        $maxAttempts = (int) config('app.login_max_attempts', 5);
+        $lockoutMinutes = (int) config('app.login_lockout_minutes', 15);
+        if (LoginAttempt::tooMany($email, $r->ip(), $maxAttempts, $lockoutMinutes)) {
+            Response::json(['error' => 'Too many login attempts'], 429);
+        }
         $user = User::findByEmail($email);
         if (!$user || !password_verify($password, $user['password_hash']) || !(int) $user['is_active']) {
+            LoginAttempt::record($email, $r->ip(), false);
             Response::json(['error' => 'Invalid credentials'], 401);
         }
+        LoginAttempt::record($email, $r->ip(), true);
         $token = ApiToken::issue((int) $user['id']);
         Response::json(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email'], 'name' => $user['full_name']]]);
     }

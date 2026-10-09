@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-<div class="d-flex">
+<div class="admin-shell d-flex">
 <aside class="admin-sidebar p-3" style="width:240px">
 <a class="d-block text-white fw-bold mb-4" href="<?= e(url('/admin')) ?>">Luxe Admin</a>
 <?php
@@ -26,7 +26,7 @@ foreach ($links as $href=>$label):
 <?php endforeach; ?>
 <a class="d-block rounded px-3 py-2 mt-4" href="<?= e(url('/')) ?>">← Cửa hàng</a>
 </aside>
-<main class="flex-grow-1 p-4 bg-light">
+<main class="admin-main flex-grow-1 p-4 bg-light">
 <?php include dirname(__DIR__).'/partials/flash.php'; ?>
 <?= $content ?>
 </main>

@@ -190,6 +190,30 @@ final class Product extends Model
         return (int) $st->fetchColumn();
     }
 
+    public static function reserveStock(int $productId, ?int $variantId, int $quantity): void
+    {
+        if ($quantity < 1) {
+            throw new \InvalidArgumentException('Số lượng không hợp lệ.');
+        }
+
+        $pdo = self::db();
+        if ($variantId) {
+            $st = $pdo->prepare(
+                'UPDATE product_variants SET stock = stock - :q WHERE id = :variant AND product_id = :product AND stock >= :available'
+            );
+            $st->execute(['q' => $quantity, 'variant' => $variantId, 'product' => $productId, 'available' => $quantity]);
+            if ($st->rowCount() !== 1) {
+                throw new \RuntimeException('Biến thể không đủ tồn kho.');
+            }
+        }
+
+        $st = $pdo->prepare('UPDATE products SET stock = stock - :q WHERE id = :id AND is_active = 1 AND stock >= :available');
+        $st->execute(['q' => $quantity, 'id' => $productId, 'available' => $quantity]);
+        if ($st->rowCount() !== 1) {
+            throw new \RuntimeException('Sản phẩm không đủ tồn kho.');
+        }
+    }
+
     public static function adjustStock(int $productId, ?int $variantId, int $delta): void
     {
         if ($variantId) {

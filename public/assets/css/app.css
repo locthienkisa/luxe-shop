@@ -33,7 +33,13 @@ body { font-family: "Be Vietnam Pro", system-ui, sans-serif; background: var(--l
 .admin-sidebar a.active, .admin-sidebar a:hover { color: #fff; background: rgba(255,255,255,.08); }
 .stat-card { border: 0; border-radius: 1rem; box-shadow: 0 8px 24px rgba(15,39,68,.06); }
 img.lazy { background: #eee; }
+.empty-state { border: 1px solid #e5e7eb; }
 @media (max-width: 575.98px) {
   .hero-slide { min-height: 240px; }
   .icon-btn { width: 40px; height: 40px; }
+}
+@media (max-width: 767.98px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar { width: 100% !important; min-height: auto; max-height: 40vh; overflow-y: auto; }
+  .admin-main { min-width: 0; overflow-x: auto; padding: 1rem !important; }
 }

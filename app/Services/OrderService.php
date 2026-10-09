@@ -24,25 +24,27 @@ final class OrderService
 
     public static function changeStatus(int $orderId, string $to, string $note = '', bool $asUser = false): void
     {
-        $order = Order::find($orderId);
-        if (!$order) {
-            throw new \RuntimeException('Đơn hàng không tồn tại.');
-        }
-        $from = $order['status'];
-        if ($asUser) {
-            if ($from !== 'pending' && $from !== 'confirmed') {
-                throw new \RuntimeException('Không thể hủy đơn ở trạng thái hiện tại.');
-            }
-            $to = 'cancelled';
-        }
-        $allowed = self::FLOW[$from] ?? [];
-        if (!in_array($to, $allowed, true)) {
-            throw new \RuntimeException('Chuyển trạng thái không hợp lệ.');
-        }
-
         $pdo = Database::connection();
         $pdo->beginTransaction();
         try {
+            $st = $pdo->prepare('SELECT * FROM orders WHERE id = :id FOR UPDATE');
+            $st->execute(['id' => $orderId]);
+            $order = $st->fetch();
+            if (!$order) {
+                throw new \RuntimeException('Đơn hàng không tồn tại.');
+            }
+            $from = $order['status'];
+            if ($asUser) {
+                if ($from !== 'pending' && $from !== 'confirmed') {
+                    throw new \RuntimeException('Không thể hủy đơn ở trạng thái hiện tại.');
+                }
+                $to = 'cancelled';
+            }
+            $allowed = self::FLOW[$from] ?? [];
+            if (!in_array($to, $allowed, true)) {
+                throw new \RuntimeException('Chuyển trạng thái không hợp lệ.');
+            }
+
             $pdo->prepare('UPDATE orders SET status=:s, cancelled_at = IF(:s2=\'cancelled\', NOW(), cancelled_at) WHERE id=:id')
                 ->execute(['s' => $to, 's2' => $to, 'id' => $orderId]);
             $pdo->prepare(
